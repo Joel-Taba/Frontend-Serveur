@@ -1,0 +1,421 @@
+.viewer-body {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.viewer-guard-status {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.viewer-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 24px;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.viewer-back {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px 9px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
+}
+.viewer-back svg { width: 16px; height: 16px; color: var(--accent); }
+.viewer-back:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  transform: translateX(-2px);
+}
+
+.viewer-title-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.viewer-type-tag {
+  flex: none;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.viewer-body[data-type="pdf"] .viewer-type-tag { color: var(--accent-pdf); border-color: var(--accent-pdf); }
+.viewer-body[data-type="image"] .viewer-type-tag { color: var(--accent-image); border-color: var(--accent-image); }
+.viewer-body[data-type="epub"] .viewer-type-tag { color: var(--accent-epub); border-color: var(--accent-epub); }
+.viewer-body[data-type="json"] .viewer-type-tag { color: var(--accent-json); border-color: var(--accent-json); }
+.viewer-body[data-type="video"] .viewer-type-tag { color: var(--accent-video); border-color: var(--accent-video); }
+
+.viewer-title {
+  font-family: var(--font-serif), serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-tools { display: flex; align-items: center; gap: 6px; flex: none; }
+
+.viewer-tools button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.viewer-tools button svg { width: 16px; height: 16px; }
+.viewer-tools button:hover { border-color: var(--accent); background: var(--surface-hover); }
+.viewer-tools button:disabled { opacity: 0.4; cursor: default; }
+.viewer-tools button:disabled:hover { border-color: var(--border); background: var(--surface); }
+
+.viewer-tools .tool-indicator {
+  min-width: 56px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0 4px;
+}
+
+.viewer-tools .tool-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.viewer-tools button.tool-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.viewer-progress { height: 3px; background: var(--border); }
+.viewer-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.viewer-body-main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.viewer-sidebar {
+  flex: none;
+  width: 208px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-alt);
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sidebar-goto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex: none;
+}
+.sidebar-goto input {
+  width: 56px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 0.85rem;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+.sidebar-goto input:focus { border-color: var(--accent); }
+.sidebar-goto-total { white-space: nowrap; }
+
+.sidebar-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 4px 2px 12px;
+  overflow-y: auto;
+}
+
+.sidebar-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sidebar-page-thumb {
+  width: 100%;
+  border: 3px solid transparent;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+  transition: border-color 0.2s, transform 0.15s ease;
+}
+.sidebar-page:hover .sidebar-page-thumb { transform: translateY(-1px); }
+.sidebar-page.active .sidebar-page-thumb { border-color: var(--accent); }
+.sidebar-page-thumb img { width: 100%; display: block; }
+
+.sidebar-page-number {
+  font-family: var(--font-serif), serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.sidebar-page.active .sidebar-page-number { color: var(--accent); font-weight: 600; }
+
+.viewer-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 36px 20px 60px;
+  overflow: auto;
+  position: relative;
+  min-width: 0;
+}
+
+.viewer-status { color: var(--text-muted); margin-top: 80px; }
+
+/* ---- PDF ---- */
+.viewer-body[data-type="pdf"] .viewer-stage {
+  background:
+    radial-gradient(ellipse at 50% 0%, var(--accent-soft), transparent 55%);
+}
+.viewer-stage canvas {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  background: #fff;
+  pointer-events: none;
+  animation: page-in 0.22s ease;
+}
+@keyframes page-in { from { opacity: 0.35; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* défilement continu : toutes les pages s'enchaînent verticalement */
+.pdf-pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+.pdf-page-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  max-width: 100%;
+}
+.pdf-page {
+  flex: none;
+  max-width: 100%;
+  scroll-margin-top: 24px;
+}
+.pdf-page-placeholder {
+  max-width: 100%;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* ---- Image (visionneuse sombre type "lightbox") ---- */
+.viewer-body[data-type="image"] .viewer-stage {
+  background: radial-gradient(ellipse at 50% 30%, #1c1f2a, #05060a);
+  padding-top: 56px;
+  justify-content: center;
+}
+.image-frame {
+  width: 100%;
+  max-width: 960px;
+  height: min(70vh, 700px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  border-radius: 10px;
+}
+.image-frame-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  animation: page-in 0.22s ease;
+}
+/* En zoom, la largeur devient explicite (voir ImageReader.tsx) : le cadre
+   bascule en défilement natif pour permettre de se déplacer dans l'image
+   agrandie, plutôt que de la recadrer sur son centre. */
+.image-frame[data-zoomed="true"] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  cursor: grab;
+}
+.image-frame[data-zoomed="true"] .image-frame-img {
+  max-width: none;
+  max-height: none;
+}
+.image-caption {
+  color: #d7dae2;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* ---- Vidéo (même registre "lightbox" que l'image) ---- */
+.viewer-body[data-type="video"] .viewer-stage {
+  background: radial-gradient(ellipse at 50% 30%, #1c1f2a, #05060a);
+  padding-top: 56px;
+  justify-content: center;
+}
+.video-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+.video-stage video {
+  width: 100%;
+  max-width: 960px;
+  max-height: 72vh;
+  border-radius: 10px;
+  background: #000;
+  box-shadow: var(--shadow);
+}
+
+/* ---- EPUB (pupitre de lecture teinte sépia) ---- */
+#epub-container {
+  width: 100%;
+  max-width: 720px;
+  height: 76vh;
+  background: #fbf3e3;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.viewer-body[data-type="epub"] .viewer-stage { padding-bottom: 20px; }
+
+/* ---- JSON ---- */
+.json-panel {
+  width: 100%;
+  max-width: 900px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.json-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.json-panel-header .dots { display: flex; gap: 6px; }
+.json-panel-header .dots span { width: 9px; height: 9px; border-radius: 50%; background: var(--border); }
+.json-panel-header .name { margin-left: 6px; font-size: 0.78rem; color: var(--text-muted); font-family: 'SFMono-Regular', Consolas, monospace; }
+.json-panel-header .lines { margin-left: auto; font-size: 0.72rem; color: var(--text-muted); }
+
+.json-view {
+  padding: 22px 24px;
+  overflow: auto;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre;
+  max-height: 74vh;
+}
+
+.json-key { color: var(--accent); }
+.json-string { color: var(--accent-json); }
+.json-number { color: var(--accent-image); }
+.json-boolean { color: #e0a15c; }
+.json-null { color: var(--accent-epub); }
+
+.viewer-watermark {
+  position: fixed;
+  bottom: 18px;
+  right: -60px;
+  transform: rotate(-14deg);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--accent-soft);
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 720px) {
+  .viewer-title { max-width: 32vw; }
+  .viewer-tools .tool-indicator { display: none; }
+  .viewer-back { padding: 9px; }
+  .viewer-back span { display: none; }
+
+  .viewer-sidebar {
+    position: fixed;
+    top: 96px;
+    bottom: 0;
+    left: 0;
+    z-index: 15;
+    width: min(78vw, 260px);
+    box-shadow: var(--shadow);
+  }
+}
