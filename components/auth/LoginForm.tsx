@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { ApiError } from "@/lib/api";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { EyeIcon, EyeOffIcon, GoogleIcon } from "./authIcons";
 
 /** N'accepte qu'un chemin interne (`/viewer/...`) : jamais une URL absolue
@@ -18,6 +19,7 @@ export default function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const next = safeNextPath(searchParams.get("next"));
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +36,7 @@ export default function LoginForm() {
       const user = await login(email, password);
       router.push(next ?? (user.role === "manager" ? "/admin" : "/"));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Impossible de contacter le serveur pour le moment.");
+      setError(err instanceof ApiError ? err.message : t.auth.genericError);
     } finally {
       setSubmitting(false);
     }
@@ -44,11 +46,11 @@ export default function LoginForm() {
     <>
       <form className="auth-form" onSubmit={handleSubmit}>
         <div className="auth-field">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">{t.auth.emailLabel}</label>
           <input
             id="email"
-            type="email"
-            placeholder="Entrez votre email"
+            type="text"
+            placeholder={t.auth.emailPlaceholder}
             autoComplete="email"
             required
             value={email}
@@ -57,12 +59,12 @@ export default function LoginForm() {
         </div>
 
         <div className="auth-field">
-          <label htmlFor="password">Mot de passe</label>
+          <label htmlFor="password">{t.auth.passwordLabel}</label>
           <div className="auth-field-input-wrap">
             <input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Entrez votre mot de passe"
+              placeholder={t.auth.passwordPlaceholder}
               autoComplete="current-password"
               required
               value={password}
@@ -72,7 +74,7 @@ export default function LoginForm() {
               type="button"
               className="auth-field-toggle"
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              aria-label={showPassword ? t.auth.hidePassword : t.auth.showPassword}
             >
               {showPassword ? <EyeOffIcon /> : <EyeIcon />}
             </button>
@@ -81,31 +83,33 @@ export default function LoginForm() {
 
         <div className="auth-row">
           <a className="auth-forgot" href="#">
-            Mot de passe oublié ?
+            {t.auth.forgotPassword}
           </a>
         </div>
 
         <button type="submit" className="auth-submit" disabled={submitting}>
-          {submitting ? "Connexion…" : "Se connecter"}
+          {submitting ? t.auth.loginButtonLoading : t.auth.loginButton}
         </button>
 
-        <div className="auth-divider">Ou</div>
+        <div className="auth-divider">{t.auth.or}</div>
 
         <button
           type="button"
           className="auth-google"
-          onClick={() => setError("La connexion avec Google arrive bientôt.")}
+          onClick={() => setError(t.auth.googleComingSoonLogin)}
         >
           <GoogleIcon />
-          Continuer avec Google
+          {t.auth.continueWithGoogle}
         </button>
       </form>
 
       {error && <p className="auth-note auth-note-error">{error}</p>}
 
       <p className="auth-switch">
-        Pas encore de compte ?{" "}
-        <Link href={next ? `/inscription?next=${encodeURIComponent(next)}` : "/inscription"}>S&apos;inscrire</Link>
+        {t.auth.noAccount}{" "}
+        <Link href={next ? `/inscription?next=${encodeURIComponent(next)}` : "/inscription"}>
+          {t.auth.signupLink}
+        </Link>
       </p>
     </>
   );

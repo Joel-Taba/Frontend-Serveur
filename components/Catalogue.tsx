@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { CatalogNode, CatalogFolder, CatalogDocument } from "@/lib/catalog";
 import type { EcosystemTool } from "@/lib/tools";
@@ -8,13 +8,11 @@ import FolderRow from "./FolderRow";
 import DocumentRow from "./DocumentRow";
 import ToolCard from "./ToolCard";
 import { BreadcrumbHomeIcon, ChevronIcon } from "./catalogueIcons";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from "@/lib/AuthContext";
+import { getCountryLabel, getCountryRootPath } from "@/lib/countries";
 
 type Tab = "bibliotheque" | "outils";
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: "bibliotheque", label: "Bibliothèque" },
-  { id: "outils", label: "Nos Outils" },
-];
 
 interface Crumb {
   id: string[];
@@ -54,10 +52,28 @@ function buildBreadcrumb(nodes: CatalogNode[], path: string[]): Crumb[] {
 }
 
 export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools: EcosystemTool[] }) {
+  const { t } = useLanguage();
+  const { user } = useAuth();
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "bibliotheque", label: t.catalogue.tabLibrary },
+    { id: "outils", label: t.catalogue.tabTools },
+  ];
+
+  // Un compte utilisateur (pas gestionnaire) avec un pays précis (pas "Tous
+  // les pays") ne voit que le dossier de son pays — voir lib/countries.ts.
+  // La navigation continue de chercher dans `tree` (l'arbre complet, jamais
+  // réécrit) : seul le point de départ ("racine affichée") est ancré sur ce
+  // dossier, pour que les identifiants réels des sous-dossiers/documents
+  // (["senegal", "primaire"], utilisés pour la résolution côté Backend)
+  // restent valides tout du long.
+  const countryFilter = user && user.role !== "manager" ? user.country : null;
+  const countryRootPath = useMemo(() => getCountryRootPath(countryFilter), [countryFilter]);
+  // Remplace le libellé générique "Bibliothèque" par le nom du pays quand la
+  // bibliothèque est filtrée, pour qu'on sache directement de quel pays
+  // vient le contenu affiché.
+  const rootLabel = getCountryLabel(t, countryFilter) ?? t.catalogue.breadcrumbRoot;
+
   const searchParams = useSearchParams();
-  // Permet au bouton "Catalogue" du lecteur de revenir au dossier d'origine
-  // du document (voir ReaderShell.tsx : /?folder=primaire/sil#catalogue)
-  // plutôt que de toujours réinitialiser la navigation à la racine.
   const initialPath = useMemo(
     () => (searchParams.get("folder") ?? "").split("/").filter(Boolean),
     [searchParams]
@@ -66,7 +82,32 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
   const [activeTab, setActiveTab] = useState<Tab>("bibliotheque");
   const [currentPath, setCurrentPath] = useState<string[]>(initialPath);
 
-  const breadcrumb = useMemo(() => buildBreadcrumb(tree, currentPath), [tree, currentPath]);
+  // La session (et donc le pays) se résout de façon asynchrone après le
+  // premier rendu (jeton en sessionStorage, illisible côté serveur) : ce
+  // n'est qu'à ce moment que `countryRootPath` prend sa vraie valeur. On
+  // recale alors la navigation dessus — sauf si l'utilisateur est arrivé
+  // via un lien direct (?folder=, retour du lecteur), dans quel cas on ne
+  // touche à rien à ce premier passage. Un changement ultérieur (pays
+  // modifié depuis la page profil) recale à nouveau, cette fois toujours.
+  const hasAppliedInitialCountryRoot = useRef(false);
+  useEffect(() => {
+    if (!hasAppliedInitialCountryRoot.current) {
+      hasAppliedInitialCountryRoot.current = true;
+      if (initialPath.length === 0 && countryRootPath.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentPath(countryRootPath);
+      }
+      return;
+    }
+    setCurrentPath(countryRootPath);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countryRootPath]);
+
+  const breadcrumbFull = useMemo(() => buildBreadcrumb(tree, currentPath), [tree, currentPath]);
+  const breadcrumb = useMemo(
+    () => breadcrumbFull.slice(countryRootPath.length),
+    [breadcrumbFull, countryRootPath]
+  );
   const currentFolder = useMemo(() => findFolder(tree, currentPath), [tree, currentPath]);
   const currentNodes = currentFolder ? currentFolder.children : tree;
 
@@ -78,9 +119,9 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
   return (
     <section id="catalogue" className="section">
       <div className="catalogue-panel">
-        <p className="eyebrow">Contenus</p>
-        <h2> Notre Écosystème</h2>
-        <p>Parcourez les cours par niveau ou découvrez tous les outils de notre écosystème.</p>
+        <p className="eyebrow">{t.catalogue.eyebrow}</p>
+        <h2>{t.catalogue.heading}</h2>
+        <p>{t.catalogue.subtitle}</p>
 
         <div className="section-tabs">
           {TABS.map((tab) => (
@@ -97,10 +138,10 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
 
         {showLibrary ? (
           <>
-            <nav className="breadcrumb" aria-label="Fil d'Ariane">
-              <button type="button" className="breadcrumb-item" onClick={() => setCurrentPath([])}>
+            <nav className="breadcrumb" aria-label={t.catalogue.breadcrumbAriaLabel}>
+              <button type="button" className="breadcrumb-item" onClick={() => setCurrentPath(countryRootPath)}>
                 <BreadcrumbHomeIcon />
-                <span>Bibliothèque</span>
+                <span>{rootLabel}</span>
               </button>
               {breadcrumb.map((crumb) => (
                 <span className="breadcrumb-crumb" key={crumb.id.join("/")}>
@@ -112,7 +153,7 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
               ))}
             </nav>
 
-            <div className="doc-count">{totalCount > 0 && `${totalCount} élément${totalCount > 1 ? "s" : ""}`}</div>
+            <div className="doc-count">{totalCount > 0 && t.catalogue.itemsCount(totalCount)}</div>
 
             {totalCount > 0 ? (
               <div className="list">
@@ -124,14 +165,12 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
                 ))}
               </div>
             ) : (
-              <p className="empty-state">Ce dossier est vide.</p>
+              <p className="empty-state">{t.catalogue.emptyFolder}</p>
             )}
           </>
         ) : (
           <>
-            <p className="doc-count">
-              {tools.length} outil{tools.length > 1 ? "s" : ""} de notre écosystème
-            </p>
+            <p className="doc-count">{t.catalogue.toolsCount(tools.length)}</p>
             {tools.length > 0 ? (
               <div className="tools-grid">
                 {tools.map((tool) => (
@@ -139,7 +178,7 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
                 ))}
               </div>
             ) : (
-              <p className="empty-state">Aucun outil à présenter pour le moment.</p>
+              <p className="empty-state">{t.catalogue.noTools}</p>
             )}
           </>
         )}

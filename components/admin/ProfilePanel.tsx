@@ -185,7 +185,7 @@ export default function ProfilePanel() {
           </label>
           <label>
             Email
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+            <input type="text" value={email} onChange={(event) => setEmail(event.target.value)} required />
           </label>
         </div>
         <button type="submit" className="btn btn-primary" disabled={savingInfo}>
@@ -215,7 +215,6 @@ export default function ProfilePanel() {
               <input
                 type={showNewPassword ? "text" : "password"}
                 autoComplete="new-password"
-                minLength={8}
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
                 required
@@ -236,7 +235,6 @@ export default function ProfilePanel() {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 autoComplete="new-password"
-                minLength={8}
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 required

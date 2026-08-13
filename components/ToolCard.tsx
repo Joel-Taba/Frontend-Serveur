@@ -1,7 +1,11 @@
+"use client";
+
 import type { EcosystemTool } from "@/lib/tools";
 import { ToolIcon, ExternalLinkIcon, ClockIcon } from "./catalogueIcons";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ToolCard({ tool }: { tool: EcosystemTool }) {
+  const { t } = useLanguage();
   const pending = tool.status === "en-developpement";
 
   const body = (
@@ -16,11 +20,11 @@ export default function ToolCard({ tool }: { tool: EcosystemTool }) {
       <span className={`tool-card-status${pending ? " is-pending" : ""}`}>
         {pending ? (
           <>
-            <ClockIcon /> En développement
+            <ClockIcon /> {t.catalogue.toolInDevelopment}
           </>
         ) : (
           <>
-            Ouvrir <ExternalLinkIcon />
+            {t.catalogue.toolOpen} <ExternalLinkIcon />
           </>
         )}
       </span>

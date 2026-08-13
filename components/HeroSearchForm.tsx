@@ -3,11 +3,13 @@
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SearchableDocument } from "@/lib/catalog";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const MAX_SUGGESTIONS = 6;
 
 export default function HeroSearchForm({ searchIndex }: { searchIndex: SearchableDocument[] }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [value, setValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,7 +47,7 @@ export default function HeroSearchForm({ searchIndex }: { searchIndex: Searchabl
       <form className="hero-search" onSubmit={handleSubmit}>
         <input
           type="search"
-          placeholder="Rechercher un titre, un genre…"
+          placeholder={t.hero.searchPlaceholder}
           autoComplete="off"
           value={value}
           onChange={(event) => {
@@ -59,7 +61,7 @@ export default function HeroSearchForm({ searchIndex }: { searchIndex: Searchabl
           aria-controls="hero-search-listbox"
         />
         <button type="submit" className="btn btn-primary" disabled={!suggestions.length}>
-          Rechercher
+          {t.hero.searchButton}
         </button>
       </form>
 
@@ -82,7 +84,7 @@ export default function HeroSearchForm({ searchIndex }: { searchIndex: Searchabl
               </button>
             ))
           ) : (
-            <p className="hero-search-suggestion-empty">Aucun document ne correspond à « {value.trim()} ».</p>
+            <p className="hero-search-suggestion-empty">{t.hero.noResults(value.trim())}</p>
           )}
         </div>
       )}

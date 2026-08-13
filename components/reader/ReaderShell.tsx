@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { CatalogDocument, DocumentType } from "@/lib/catalog";
+import { useAuth } from "@/lib/AuthContext";
 import ThemeToggle from "@/components/ThemeToggle";
 import { BackIcon } from "./icons";
+import RatingDialog from "./RatingDialog";
 
 const PdfReader = dynamic(() => import("./PdfReader"), { ssr: false });
 const ImageReader = dynamic(() => import("./ImageReader"), { ssr: false });
@@ -23,10 +25,13 @@ const TYPE_LABELS: Record<DocumentType, string> = {
 };
 
 export default function ReaderShell({ doc }: { doc: CatalogDocument }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const { user } = useAuth();
   const [toolbar, setToolbar] = useState<ReactNode>(null);
   const [progress, setProgress] = useState(0);
   const [sidebar, setSidebar] = useState<ReactNode>(null);
+  const [showRating, setShowRating] = useState(false);
   const stageRef = useRef<HTMLElement>(null);
   const fileUrl = `/api/file/${doc.id.join("/")}`;
 
@@ -45,6 +50,23 @@ export default function ReaderShell({ doc }: { doc: CatalogDocument }) {
     : parentFolderPath.length > 0
       ? `/?folder=${parentFolderPath.join("/")}#catalogue`
       : "/#catalogue";
+
+  // La pop-up de notation n'est proposée qu'aux simples utilisateurs (pas
+  // aux gestionnaires) en quittant le lecteur — voir DocumentRateView côté
+  // Backend, qui refuse de toute façon la notation à un compte gestionnaire.
+  const canRate = user?.role === "user";
+
+  function handleBackClick(event: React.MouseEvent) {
+    if (canRate) {
+      event.preventDefault();
+      setShowRating(true);
+    }
+  }
+
+  function handleRatingDone() {
+    setShowRating(false);
+    router.push(backHref);
+  }
 
   useEffect(() => {
     document.title = `${doc.title} — Flores Gong Nota`;
@@ -81,7 +103,7 @@ export default function ReaderShell({ doc }: { doc: CatalogDocument }) {
   return (
     <div className="viewer-body" data-type={doc.type}>
       <header className="viewer-header">
-        <Link className="viewer-back" href={backHref}>
+        <Link className="viewer-back" href={backHref} onClick={handleBackClick}>
           <BackIcon />
           <span>{backLabel}</span>
         </Link>
@@ -111,6 +133,8 @@ export default function ReaderShell({ doc }: { doc: CatalogDocument }) {
       <div className="viewer-watermark" aria-hidden="true">
         FLORES GONG NOTA — LECTURE SEULE
       </div>
+
+      {showRating && <RatingDialog doc={doc} onDone={handleRatingDone} />}
     </div>
   );
 }

@@ -144,6 +144,65 @@ img { max-width: 100%; display: block; }
 .site-header .theme-toggle { border-color: rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.1); color: #fff; }
 .site-header .theme-toggle:hover { border-color: #fff; }
 
+.lang-switcher { position: relative; }
+.lang-switcher-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.lang-switcher-toggle svg { width: 17px; height: 17px; }
+.lang-switcher-toggle:hover { border-color: var(--accent); }
+.site-header .lang-switcher-toggle {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.site-header .lang-switcher-toggle:hover { border-color: #fff; }
+
+.lang-switcher-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  min-width: 140px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+:root[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
+.lang-switcher-option {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+:root[dir="rtl"] .lang-switcher-option { text-align: right; }
+.lang-switcher-option:hover { background: var(--bg-alt); }
+.lang-switcher-option.is-active { color: var(--accent); font-weight: 700; }
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -294,7 +353,7 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
   gap: 2px;
   width: 100%;
-  text-align: left;
+  text-align: start;
   padding: 12px 18px;
   background: transparent;
   border: none;
@@ -493,7 +552,7 @@ img { max-width: 100%; display: block; }
 .section-tab:hover { color: var(--text); }
 .section-tab.active { background: var(--accent); color: var(--accent-contrast); }
 
-.doc-count { color: var(--text-muted); font-size: 0.85rem; margin: 18px 0 16px; text-align: left; min-height: 1.2em; }
+.doc-count { color: var(--text-muted); font-size: 0.85rem; margin: 18px 0 16px; text-align: start; min-height: 1.2em; }
 
 /* ---------- Fil d'Ariane ---------- */
 .breadcrumb {
@@ -502,7 +561,7 @@ img { max-width: 100%; display: block; }
   flex-wrap: wrap;
   gap: 6px;
   margin: 12px 0 4px;
-  text-align: left;
+  text-align: start;
 }
 .breadcrumb-item {
   display: inline-flex;
@@ -529,7 +588,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  text-align: left;
+  text-align: start;
 }
 
 .list-row {
@@ -542,7 +601,7 @@ img { max-width: 100%; display: block; }
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   font-family: inherit;
   transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   animation: rise 0.3s ease both;
@@ -622,6 +681,131 @@ img { max-width: 100%; display: block; }
 .list-row-type-badge[data-type="json"] { color: var(--accent-json); }
 .list-row-type-badge[data-type="video"] { color: var(--accent-video); }
 
+/* ---------- Notation par étoiles (catalogue, gestionnaire, pop-up lecteur) ---------- */
+.star-rating { display: inline-flex; align-items: center; gap: 2px; flex: none; }
+.star-rating-item {
+  display: flex;
+  color: var(--border);
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: default;
+}
+.star-rating-item svg { width: 14px; height: 14px; }
+.star-rating-item.is-filled { color: var(--accent); }
+.star-rating-value { margin-left: 4px; font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+
+.star-rating-input .star-rating-item {
+  cursor: pointer;
+  color: var(--border);
+  transition: color 0.12s, transform 0.12s;
+}
+.star-rating-input .star-rating-item svg { width: 30px; height: 30px; }
+.star-rating-input .star-rating-item:hover { transform: scale(1.12); }
+.star-rating-input .star-rating-item.is-filled { color: var(--accent); }
+
+/* ---------- Boîtes de dialogue génériques (confirmation, détail, notation) ----------
+   Utilisées à la fois dans l'espace gestionnaire (ConfirmDialog, UserDetailDialog)
+   et sur la page de lecture (RatingDialog) : styles ici, dans globals.css,
+   chargé partout — pas dans admin.css, propre à /admin. */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 8, 4, 0.55);
+  backdrop-filter: blur(4px);
+  animation: confirm-fade-in 0.15s ease;
+}
+@keyframes confirm-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  text-align: center;
+  animation: confirm-pop-in 0.18s ease;
+}
+@keyframes confirm-pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.confirm-dialog-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: rgba(224, 100, 79, 0.14);
+  color: var(--accent-pdf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confirm-dialog-icon svg { width: 24px; height: 24px; }
+
+.confirm-dialog h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-serif), serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.confirm-dialog p {
+  margin: 0 0 24px;
+  color: var(--text-muted);
+  font-size: 0.87rem;
+  line-height: 1.55;
+}
+
+.confirm-dialog-actions { display: flex; gap: 10px; }
+.confirm-dialog-actions .btn { flex: 1; }
+/* .btn-ghost est pensé pour le fond photo du hero (texte blanc translucide) —
+   dans une boîte de dialogue (fond = var(--surface), clair ou sombre selon
+   le thème), il lui faut le même traitement "accent doux" que dans l'espace
+   gestionnaire (voir .admin-panel .btn-ghost dans admin.css). */
+.confirm-dialog .btn-ghost { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.confirm-dialog .btn-ghost:hover { border-color: transparent; filter: brightness(1.06); }
+
+.confirm-dialog-danger {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 22px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--accent-pdf);
+  color: #fff;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.15s;
+}
+.confirm-dialog-danger:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+/* ---------- Pop-up de notation (sortie du lecteur) ---------- */
+.rating-dialog .star-rating { justify-content: center; margin: 20px 0 24px; }
+.rating-dialog-submit {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 22px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.15s;
+}
+.rating-dialog-submit:hover:not(:disabled) { filter: brightness(1.06); transform: translateY(-1px); }
+.rating-dialog-submit:disabled { opacity: 0.5; cursor: default; }
+
 .list-row-size {
   flex: none;
   font-size: 0.72rem;
@@ -644,7 +828,7 @@ img { max-width: 100%; display: block; }
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 18px;
-  text-align: left;
+  text-align: start;
 }
 
 .tool-card {

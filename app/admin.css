@@ -319,7 +319,6 @@
   grid-template-columns: 1fr 140px 140px 90px;
   gap: 12px;
   padding: 0 16px 12px;
-  padding-right: 76px; /* aligne les colonnes avec .admin-row-shell (ligne + bouton supprimer) */
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -327,6 +326,14 @@
   color: var(--text-muted);
   border-bottom: 1px solid var(--border);
 }
+
+/* Seule la table de la Bibliothèque a un bouton supprimer à côté de chaque
+   ligne (.admin-row-shell) : son en-tête doit réserver le même espace à
+   droite (8px d'écart + 36px de bouton = 44px, plus les 16px de marge
+   droite habituelle de la ligne = 60px) pour que les colonnes restent
+   alignées. Les autres tables (Inscriptions, Connexions) n'ont pas ce
+   bouton et ne doivent donc pas hériter de cette réserve. */
+.admin-table-with-actions .admin-table-head { padding-right: 60px; }
 
 .admin-table-row {
   display: grid;
@@ -371,85 +378,56 @@
 .admin-table-delete:hover { border-color: var(--accent-pdf); color: var(--accent-pdf); }
 .admin-table-delete svg { width: 15px; height: 15px; }
 
-/* ---------- Confirmation de suppression ---------- */
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
+/* Styles génériques de boîte de dialogue (.confirm-overlay, .confirm-dialog…)
+   déménagés dans globals.css : réutilisés hors de l'espace gestionnaire
+   (pop-up de notation sur /viewer, voir RatingDialog.tsx). */
+
+/* ---------- Détail d'un compte (Inscriptions) ---------- */
+.detail-dialog { max-width: 440px; }
+.detail-dialog .confirm-dialog-icon { background: var(--accent-soft); color: var(--accent); overflow: hidden; }
+.detail-dialog .confirm-dialog-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+.detail-dialog-list { text-align: left; margin: 0 0 22px; }
+.detail-dialog-list > div {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(10, 8, 4, 0.55);
-  backdrop-filter: blur(4px);
-  animation: confirm-fade-in 0.15s ease;
-}
-@keyframes confirm-fade-in { from { opacity: 0; } to { opacity: 1; } }
-
-.confirm-dialog {
-  width: 100%;
-  max-width: 400px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 28px;
-  text-align: center;
-  animation: confirm-pop-in 0.18s ease;
-}
-@keyframes confirm-pop-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.confirm-dialog-icon {
-  width: 52px;
-  height: 52px;
-  margin: 0 auto 16px;
-  border-radius: 50%;
-  background: rgba(224, 100, 79, 0.14);
-  color: var(--accent-pdf);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.confirm-dialog-icon svg { width: 24px; height: 24px; }
-
-.confirm-dialog h3 {
-  margin: 0 0 10px;
-  font-family: var(--font-serif), serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-.confirm-dialog p {
-  margin: 0 0 24px;
-  color: var(--text-muted);
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
   font-size: 0.87rem;
-  line-height: 1.55;
 }
-
-.confirm-dialog-actions { display: flex; gap: 10px; }
-.confirm-dialog-actions .btn { flex: 1; }
-
-.confirm-dialog-danger {
-  flex: 1;
-  border: none;
-  border-radius: 999px;
-  padding: 11px 22px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  font-family: inherit;
-  background: var(--accent-pdf);
-  color: #fff;
-  cursor: pointer;
-  transition: filter 0.2s, transform 0.15s;
-}
-.confirm-dialog-danger:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.detail-dialog-list > div:last-child { border-bottom: none; }
+.detail-dialog-list dt { margin: 0; color: var(--text-muted); font-weight: 600; }
+.detail-dialog-list dd { margin: 0; text-align: right; word-break: break-word; }
 
 /* Variantes pour les tableaux d'historique (Inscriptions/Connexions) :
    pas de colonne Taille/Action, lignes non cliquables. */
 .admin-table-head-3, .admin-table-row-3 { grid-template-columns: 1fr 160px 200px; }
 .admin-table-head-4, .admin-table-row-4 { grid-template-columns: 1fr 130px 160px 200px; }
+/* Historique des inscriptions : mêmes colonnes que -3, plus une colonne
+   d'actions (voir/supprimer) — lignes non cliquables, boutons directement
+   dans la grille (pas besoin de .admin-row-shell ici, la ligne n'est pas
+   elle-même un bouton/lien). */
+.admin-table-head-3-actions, .admin-table-row-3-actions { grid-template-columns: 1fr 140px 200px 90px; }
+.admin-table-actions-cell { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.admin-table-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.admin-table-icon-btn svg { width: 14px; height: 14px; }
+.admin-table-icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.admin-table-icon-btn.is-danger:hover { border-color: var(--accent-pdf); color: var(--accent-pdf); }
+.admin-table-icon-btn:disabled { opacity: 0.35; cursor: default; }
+.admin-table-icon-btn:disabled:hover { border-color: var(--border); color: var(--text-muted); }
 .admin-table-row-static { cursor: default; }
 .admin-table-row-static:hover { background: transparent; }
 
@@ -469,6 +447,8 @@
 .admin-table-icon-folder { background: var(--accent-soft); color: var(--accent); }
 
 .admin-table-muted { color: var(--text-muted); font-size: 0.82rem; }
+
+.admin-table-type-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 
 .admin-badge {
   display: inline-flex;

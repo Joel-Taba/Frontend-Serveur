@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { CatalogDocument } from "@/lib/catalog";
+import type { CatalogDocument, DocumentType } from "@/lib/catalog";
 import { formatBytes } from "@/lib/format";
 import { ChevronIcon } from "./catalogueIcons";
+import { StarRatingDisplay } from "./StarRating";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { Language } from "@/lib/i18n/LanguageContext";
 
 const ICONS: Record<CatalogDocument["type"], React.ReactNode> = {
   pdf: (
@@ -43,15 +46,14 @@ const ICONS: Record<CatalogDocument["type"], React.ReactNode> = {
   ),
 };
 
-const TYPE_LABELS: Record<CatalogDocument["type"], string> = {
-  pdf: "PDF",
-  image: "Image",
-  epub: "EPUB",
-  json: "JSON",
-  video: "Vidéo",
+const TYPE_LABELS: Record<Language, Record<DocumentType, string>> = {
+  fr: { pdf: "PDF", image: "Image", epub: "EPUB", json: "JSON", video: "Vidéo" },
+  en: { pdf: "PDF", image: "Image", epub: "EPUB", json: "JSON", video: "Video" },
+  ar: { pdf: "PDF", image: "صورة", epub: "EPUB", json: "JSON", video: "فيديو" },
 };
 
 export default function DocumentRow({ doc, subtitle }: { doc: CatalogDocument; subtitle?: string }) {
+  const { t, language } = useLanguage();
   const [coverFailed, setCoverFailed] = useState(false);
   const showCover = doc.type !== "json" && doc.type !== "video" && !coverFailed;
   const idPath = doc.id.join("/");
@@ -71,11 +73,12 @@ export default function DocumentRow({ doc, subtitle }: { doc: CatalogDocument; s
       )}
       <span className="list-row-body">
         <span className="list-row-title">{doc.title}</span>
-        <span className="list-row-subtitle">{subtitle ?? "Disponible en lecture intégrale"}</span>
+        <span className="list-row-subtitle">{subtitle ?? t.catalogue.documentSubtitle}</span>
       </span>
       <span className="list-row-type-badge" data-type={doc.type}>
-        {TYPE_LABELS[doc.type]}
+        {TYPE_LABELS[language][doc.type]}
       </span>
+      <StarRatingDisplay value={doc.averageRating} count={doc.ratingsCount} />
       <span className="list-row-size">{formatBytes(doc.size)}</span>
       <span className="list-row-chevron" aria-hidden="true">
         <ChevronIcon />

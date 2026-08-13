@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="site-footer">
       <div className="footer-grid">
@@ -8,36 +13,33 @@ export default function Footer() {
           <Link className="brand" href="/">
             <span className="brand-name">Flores Gong Nota</span>
           </Link>
-          <p>
-            Bibliothèque numérique en lecture seule. Les documents proposés restent la
-            propriété de leurs auteurs et ne peuvent être ni téléchargés, ni reproduits.
-          </p>
+          <p>{t.footer.description}</p>
         </div>
         <div className="footer-col">
-          <h4>Bibliothèque</h4>
+          <h4>{t.footer.libraryHeading}</h4>
           <ul>
             <li>
-              <a href="#catalogue">Contenus</a>
+              <a href="#catalogue">{t.footer.linkContents}</a>
             </li>
             <li>
-              <a href="#genres">Genres</a>
+              <a href="#genres">{t.footer.linkGenres}</a>
             </li>
             <li>
-              <a href="#fonctionnalites">Fonctionnalités</a>
+              <a href="#fonctionnalites">{t.footer.linkFeatures}</a>
             </li>
             <li>
-              <a href="#a-propos">À propos</a>
+              <a href="#a-propos">{t.footer.linkAbout}</a>
             </li>
             <li>
-              <a href="#chiffres">Nos chiffres</a>
+              <a href="#chiffres">{t.footer.linkStats}</a>
             </li>
             <li>
-              <a href="#faq">FAQ</a>
+              <a href="#faq">{t.footer.linkFaq}</a>
             </li>
           </ul>
         </div>
         <div className="footer-col">
-          <h4>Formats pris en charge</h4>
+          <h4>{t.footer.formatsHeading}</h4>
           <ul>
             <li>PDF</li>
             <li>EPUB</li>
@@ -46,15 +48,15 @@ export default function Footer() {
           </ul>
         </div>
         <div className="footer-col">
-          <h4>Confiance</h4>
+          <h4>{t.footer.trustHeading}</h4>
           <ul>
-            <li>Lecture protégée</li>
-            <li>Aucun téléchargement</li>
-            <li>Contenus mis à jour automatiquement</li>
+            <li>{t.footer.trustProtected}</li>
+            <li>{t.footer.trustNoDownload}</li>
+            <li>{t.footer.trustAutoUpdate}</li>
           </ul>
         </div>
       </div>
-      <div className="footer-bottom">© 2026 Flores Gong Nota. Tous droits réservés.</div>
+      <div className="footer-bottom">{t.footer.copyright}</div>
     </footer>
   );
 }

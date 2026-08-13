@@ -11,11 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default function InscriptionPage() {
   return (
-    <AuthShell
-      title="Rejoignez-"
-      accentWord="nous !"
-      subtitle="Créez votre compte pour sauvegarder vos favoris et suivre votre progression de lecture."
-    >
+    <AuthShell variant="signup">
       <SignupForm />
     </AuthShell>
   );

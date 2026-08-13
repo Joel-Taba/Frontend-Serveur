@@ -18,3 +18,17 @@ export function recordVisit(path = "/"): void {
     // Le suivi de visites ne doit jamais faire échouer le rendu de la page.
   });
 }
+
+/** Nombre de comptes utilisateurs (hors gestionnaires) — statistique
+ * publique « Comptes créés sur le site » (Stats.tsx). Retombe sur 0 si le
+ * Backend est indisponible, plutôt que de faire échouer la page. */
+export async function getRegisteredAccountCount(): Promise<number> {
+  try {
+    const res = await fetch(`${BACKEND_INTERNAL_URL}/accounts/count/`, { cache: "no-store" });
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return typeof data.count === "number" ? data.count : 0;
+  } catch {
+    return 0;
+  }
+}

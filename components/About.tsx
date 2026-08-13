@@ -1,6 +1,10 @@
+"use client";
+
 import { COVERS, COVERS_BASE_PATH } from "@/lib/covers";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function About({ documentCount, formatCount }: { documentCount: number; formatCount: number }) {
+  const { t } = useLanguage();
   const [invisibles, romance, ia] = [COVERS[4], COVERS[1], COVERS[5]];
 
   return (
@@ -12,25 +16,21 @@ export default function About({ documentCount, formatCount }: { documentCount: n
           <img className="ac-3" src={`${COVERS_BASE_PATH}${ia.file}`} alt="" />
         </div>
         <div className="about-text">
-          <p className="eyebrow">À propos</p>
-          <h2>Une Bibliothèque Vivante, Enrichie Chaque Mois</h2>
-          <p>
-            Flores Gong Nota rassemble des documents de natures variées — PDF, EPUB, images et
-            données JSON — choisis pour leur qualité. Chaque nouvelle acquisition rejoint
-            automatiquement le catalogue et devient consultable instantanément.
-          </p>
+          <p className="eyebrow">{t.about.eyebrow}</p>
+          <h2>{t.about.heading}</h2>
+          <p>{t.about.paragraph}</p>
           <div className="stat-row">
             <div className="stat-card">
               <span className="stat-value">{documentCount}</span>
-              <span className="stat-label">Documents</span>
+              <span className="stat-label">{t.about.documentsLabel}</span>
             </div>
             <div className="stat-card">
               <span className="stat-value">{formatCount}</span>
-              <span className="stat-label">Formats gérés</span>
+              <span className="stat-label">{t.about.formatsLabel}</span>
             </div>
             <div className="stat-card">
               <span className="stat-value">100%</span>
-              <span className="stat-label">Lecture en ligne</span>
+              <span className="stat-label">{t.about.onlineReadingLabel}</span>
             </div>
           </div>
         </div>

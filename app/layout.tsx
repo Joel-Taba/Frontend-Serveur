@@ -1,18 +1,30 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/lib/AuthContext";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
-const inter = Inter({
+// Polices auto-hébergées (fichiers dans assets/fonts/, extraits une fois
+// des paquets @fontsource) plutôt que next/font/google : ce dernier
+// télécharge les polices depuis fonts.googleapis.com au moment du build,
+// une dépendance externe inutile — et bloquante — pour un serveur autonome
+// qui doit pouvoir reconstruire le site hors ligne.
+const inter = localFont({
+  src: "../assets/fonts/inter-variable.woff2",
   variable: "--font-sans",
-  subsets: ["latin"],
+  weight: "100 900",
+  display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const cormorant = localFont({
+  src: [
+    { path: "../assets/fonts/cormorant-garamond-500.woff2", weight: "500", style: "normal" },
+    { path: "../assets/fonts/cormorant-garamond-600.woff2", weight: "600", style: "normal" },
+    { path: "../assets/fonts/cormorant-garamond-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-serif",
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +42,9 @@ export default function RootLayout({
     <html lang="fr" className={`${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
-          <AuthProvider>{children}</AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -77,12 +77,14 @@
   margin: 0 0 28px;
 }
 
-.auth-form { display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.auth-form { display: flex; flex-direction: column; gap: 16px; text-align: start; }
 .auth-field { display: flex; flex-direction: column; gap: 6px; }
 .auth-field label { font-size: 0.78rem; color: rgba(255, 255, 255, 0.75); }
+.auth-field-help { margin: 2px 0 0; font-size: 0.74rem; line-height: 1.4; color: rgba(255, 255, 255, 0.55); }
 .auth-field-input-wrap { position: relative; }
 
-.auth-field input {
+.auth-field input,
+.auth-field select {
   width: 100%;
   padding: 12px 16px;
   border-radius: 12px;
@@ -94,9 +96,12 @@
   outline: none;
   transition: border-color 0.2s, background 0.2s;
 }
+.auth-field select { color-scheme: dark; }
+.auth-field select option { color: #111; }
 .auth-field-input-wrap input { padding-right: 44px; }
 .auth-field input::placeholder { color: rgba(255, 255, 255, 0.45); }
-.auth-field input:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.12); }
+.auth-field input:focus,
+.auth-field select:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.12); }
 
 .auth-field-toggle {
   position: absolute;

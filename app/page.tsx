@@ -9,13 +9,18 @@ import CtaBanner from "@/components/CtaBanner";
 import Footer from "@/components/Footer";
 import { getCatalogTree, listAllDocuments } from "@/lib/catalog";
 import { getEcosystemTools } from "@/lib/tools";
-import { recordVisit } from "@/lib/analytics";
+import { recordVisit, getRegisteredAccountCount } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   recordVisit("/");
-  const [tree, searchIndex, tools] = await Promise.all([getCatalogTree(), listAllDocuments(), getEcosystemTools()]);
+  const [tree, searchIndex, tools, accountCount] = await Promise.all([
+    getCatalogTree(),
+    listAllDocuments(),
+    getEcosystemTools(),
+    getRegisteredAccountCount(),
+  ]);
   const formatCount = new Set(searchIndex.map((doc) => doc.type)).size;
 
   return (
@@ -26,7 +31,7 @@ export default async function Home() {
         <Features />
         <Marquee />
         <Catalogue tree={tree} tools={tools} />
-        <Stats documentCount={searchIndex.length} />
+        <Stats documentCount={searchIndex.length} accountCount={accountCount} />
         <Faq />
         <CtaBanner />
       </main>

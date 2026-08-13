@@ -25,6 +25,11 @@ export interface CatalogDocument {
   size: number;
   downloadUrl: string;
   thumbnailUrl: string;
+  /** Moyenne des notes (1 à 5 étoiles) laissées par les utilisateurs — null
+   * tant qu'aucune notation n'a été déposée. Visible catalogue public et
+   * espace gestionnaire (même donnée, une seule source de vérité). */
+  averageRating: number | null;
+  ratingsCount: number;
 }
 
 export interface CatalogFolder {
@@ -50,6 +55,8 @@ interface BackendDocumentNode {
   path: string[];
   download_url: string;
   thumbnail_url: string;
+  average_rating: number | null;
+  ratings_count: number;
 }
 
 interface BackendFolderNode {
@@ -72,6 +79,8 @@ function mapDocument(node: BackendDocumentNode): CatalogDocument {
     size: node.size,
     downloadUrl: node.download_url,
     thumbnailUrl: node.thumbnail_url,
+    averageRating: node.average_rating,
+    ratingsCount: node.ratings_count,
   };
 }
 

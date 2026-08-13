@@ -1,0 +1,229 @@
+import type { Dictionary } from "./types";
+
+export const en: Dictionary = {
+  header: {
+    navAbout: "About",
+    navFeatures: "Features",
+    navGenres: "Genres",
+    navCatalogue: "Catalogue",
+    login: "Log In",
+    signup: "Sign Up",
+    logout: "Log Out",
+    profile: "Profile",
+  },
+  hero: {
+    title: "Discover A Curated Selection Of Books & Documents",
+    subtitle:
+      "Science, romance, personal development, astronomy, history… A collection you browse and read entirely online with our built-in reader — never downloading or copying files.",
+    searchPlaceholder: "Search a title, a genre…",
+    searchButton: "Search",
+    noResults: (query) => `No document matches "${query}".`,
+  },
+  about: {
+    eyebrow: "About",
+    heading: "A Living Library, Enriched Every Month",
+    paragraph:
+      "Flores Gong Nota brings together documents of various kinds — PDF, EPUB, images and JSON data — chosen for their quality. Every new addition automatically joins the catalogue and becomes instantly available.",
+    documentsLabel: "Documents",
+    formatsLabel: "Formats supported",
+    onlineReadingLabel: "Online reading",
+  },
+  features: {
+    eyebrow: "What we offer",
+    heading: "A complete library",
+    items: [
+      {
+        title: "Wide range of formats",
+        description:
+          "PDF, EPUB, images and JSON live together in a single library, organised by level and easy to browse.",
+      },
+      {
+        title: "Built-in reader",
+        description: "Every document type gets a reading experience tailored for visual comfort.",
+      },
+      {
+        title: "No downloads",
+        description:
+          "Files are never exposed directly: only streamed through the reader, to prevent any copying.",
+      },
+    ],
+  },
+  marquee: {
+    eyebrow: "Our worlds",
+    heading: "Our themes",
+  },
+  catalogue: {
+    eyebrow: "Contents",
+    heading: "Our Ecosystem",
+    subtitle: "Browse courses by level or discover all the tools in our ecosystem.",
+    tabLibrary: "Library",
+    tabTools: "Our Tools",
+    breadcrumbRoot: "Library",
+    breadcrumbAriaLabel: "Breadcrumb",
+    emptyFolder: "This folder is empty.",
+    noTools: "No tool to show for now.",
+    itemsCount: (n) => `${n} item${n > 1 ? "s" : ""}`,
+    toolsCount: (n) => `${n} tool${n > 1 ? "s" : ""} in our ecosystem`,
+    folderEmpty: "Empty",
+    folderCount: (folders, documents) => {
+      const parts: string[] = [];
+      if (folders) parts.push(`${folders} folder${folders > 1 ? "s" : ""}`);
+      if (documents) parts.push(`${documents} document${documents > 1 ? "s" : ""}`);
+      return parts.join(" · ");
+    },
+    documentSubtitle: "Available for full reading",
+    toolInDevelopment: "In development",
+    toolOpen: "Open",
+  },
+  stats: {
+    eyebrow: "Our numbers",
+    heading: "A Collection That Speaks For Itself",
+    documentsLabel: "Books in our library",
+    accountsLabel: "Accounts created on the site",
+  },
+  faq: {
+    eyebrow: "FAQ",
+    heading: "Frequently Asked Questions",
+    items: [
+      {
+        q: "What is Flores Gong Nota?",
+        a: "A digital library bringing together courses and documents (PDF, EPUB, images, JSON), sorted by level, readable directly online thanks to a built-in reader.",
+      },
+      {
+        q: "Do I need to download a document to read it?",
+        a: "No. Every document opens in our built-in reader and stays read-only: no download or copy is offered.",
+      },
+      {
+        q: "How are documents organised?",
+        a: "They are sorted into folders by level (Primary, Secondary, Higher education…). New folders can be added at any time and appear automatically in the Library.",
+      },
+      {
+        q: "Is the catalogue updated regularly?",
+        a: "Yes: every new document added to the server appears instantly in the catalogue, with no restart or technical action needed.",
+      },
+      {
+        q: "Do I need an account to browse the library?",
+        a: "You can browse the catalogue freely without an account, but reading a document requires being logged in — creating an account is free and takes only a minute.",
+      },
+      {
+        q: "What is the \"Our Tools\" section?",
+        a: "This is where we showcase the other applications in our ecosystem, such as our upcoming alphabet-learning app, currently in development.",
+      },
+      {
+        q: "Can I use the site from a phone or tablet?",
+        a: "Yes, the interface adapts to every screen size, including the document reader.",
+      },
+      {
+        q: "Is access to the library paid?",
+        a: "No, access is entirely free.",
+      },
+      {
+        q: "What should I do if a document doesn't open properly?",
+        a: "This can happen with very large files while they load. If the issue persists, write to us through the contact section opposite.",
+      },
+      {
+        q: "How can I report an issue or suggestion?",
+        a: "Through the contact section opposite: complaints, encouragement, criticism or suggestions — every message is read.",
+      },
+    ],
+  },
+  contact: {
+    heading: "Something to share with us?",
+    subtitle: "Complaint, encouragement, criticism or appreciation — every message is read.",
+    typeAriaLabel: "Message type",
+    types: [
+      { key: "appreciation", label: "Appreciation" },
+      { key: "suggestion", label: "Suggestion" },
+      { key: "critique", label: "Criticism" },
+      { key: "plainte", label: "Complaint" },
+      { key: "autre", label: "Other" },
+    ],
+    namePlaceholder: "Your name (optional)",
+    messagePlaceholder: "Your message…",
+    send: "Send",
+    sending: "Sending…",
+    success: "Message sent, thank you!",
+    error: "Unable to send the message right now.",
+  },
+  cta: {
+    heading: "A New Document Was Just Added",
+    subtitle: "Content updates automatically — check back often to discover the latest additions and our new tools.",
+    button: "See the contents",
+  },
+  footer: {
+    description:
+      "Read-only digital library. The documents offered remain the property of their authors and may not be downloaded or reproduced.",
+    libraryHeading: "Library",
+    linkContents: "Contents",
+    linkGenres: "Genres",
+    linkFeatures: "Features",
+    linkAbout: "About",
+    linkStats: "Our numbers",
+    linkFaq: "FAQ",
+    formatsHeading: "Supported formats",
+    trustHeading: "Trust",
+    trustProtected: "Protected reading",
+    trustNoDownload: "No downloads",
+    trustAutoUpdate: "Content updated automatically",
+    copyright: "© 2026 Flores Gong Nota. All rights reserved.",
+  },
+  auth: {
+    backToSite: "Back to site",
+    loginTitle: "Welcome",
+    loginAccent: "back!",
+    loginSubtitle: "Log in to access your library, your favourites and your progress.",
+    signupTitle: "Join",
+    signupAccent: "us!",
+    signupSubtitle: "Create your account to save your favourites and track your reading progress.",
+    emailLabel: "Email",
+    emailPlaceholder: "Enter your email",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter your password",
+    newPasswordPlaceholder: "Create a password",
+    forgotPassword: "Forgot your password?",
+    loginButton: "Log in",
+    loginButtonLoading: "Logging in…",
+    or: "Or",
+    continueWithGoogle: "Continue with Google",
+    googleComingSoonLogin: "Google sign-in is coming soon.",
+    googleComingSoonSignup: "Google sign-up is coming soon.",
+    noAccount: "Don't have an account yet?",
+    signupLink: "Sign up",
+    haveAccount: "Already have an account?",
+    loginLink: "Log in",
+    fullNameLabel: "Full name",
+    fullNamePlaceholder: "Enter your name",
+    ageLabel: "Age",
+    agePlaceholder: "Enter your age",
+    countryLabel: "Country",
+    countryPlaceholder: "Choose your country",
+    countryHelp: "This choice determines which textbooks you'll have access to.",
+    signupButton: "Create my account",
+    signupButtonLoading: "Creating…",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
+    genericError: "Unable to reach the server right now.",
+  },
+  languageSwitcher: {
+    label: "Language",
+  },
+  countries: {
+    cameroon: "Cameroon",
+    chad: "Chad",
+    drc: "DR Congo",
+    senegal: "Senegal",
+    burkina_faso: "Burkina Faso",
+    niger: "Niger",
+    all: "All countries",
+  },
+  profile: {
+    heading: "My profile",
+    subtitle: "Your registration details. You can change your country at any time.",
+    saveButton: "Save",
+    saveButtonLoading: "Saving…",
+    saveSuccess: "Country updated: your library now reflects this choice.",
+    saveError: "Unable to update your country right now.",
+    backToSite: "Back to home",
+    viewLibraryButton: "View my library",
+  },
+};

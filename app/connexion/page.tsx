@@ -11,11 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default function ConnexionPage() {
   return (
-    <AuthShell
-      title="Bon"
-      accentWord="retour !"
-      subtitle="Connectez-vous pour accéder à votre bibliothèque, vos favoris et votre progression."
-    >
+    <AuthShell variant="login">
       <LoginForm />
     </AuthShell>
   );

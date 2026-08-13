@@ -10,9 +10,9 @@ export interface Cover {
 export const COVERS_BASE_PATH = "/assets/covers/";
 
 export const COVERS: Cover[] = [
-  { file: "cover-01.png", title: "Cosmos", genre: "Astronomie" },
-  { file: "cover-02.jpeg", title: "Et si c'était sous mes yeux", genre: "Romance" },
-  { file: "cover-03.jpeg", title: "L'Art de parler avec confiance", genre: "Développement personnel" },
+  { file: "cover-08.png", title: "Cosmos", genre: "Astronomie" },
+  { file: "cover-08.png", title: "Et si c'était sous mes yeux", genre: "Romance" },
+  { file: "cover-08.png", title: "L'Art de parler avec confiance", genre: "Développement personnel" },
   { file: "cover-04.jpeg", title: "Le Rose de mes Rêves", genre: "Romance" },
   { file: "cover-05.jpeg", title: "Les Invisibles de Fougeret", genre: "Roman" },
   { file: "cover-06.png", title: "Gagner de l'argent avec l'IA", genre: "Business & Tech" },

@@ -7,6 +7,8 @@ export interface AuthUser {
   id: number;
   email: string;
   full_name: string;
+  age: number | null;
+  country: string;
   role: "user" | "manager";
   is_active: boolean;
   date_joined: string;
@@ -23,7 +25,13 @@ interface AuthContextValue {
   isLoading: boolean;
   isManager: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
-  register: (fullName: string, email: string, password: string) => Promise<AuthUser>;
+  register: (
+    fullName: string,
+    email: string,
+    password: string,
+    age: number,
+    country: string,
+  ) => Promise<AuthUser>;
   logout: () => Promise<void>;
   updateUser: (user: AuthUser) => void;
 }
@@ -73,11 +81,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data.user;
   }
 
-  async function register(fullName: string, email: string, password: string) {
+  async function register(
+    fullName: string,
+    email: string,
+    password: string,
+    age: number,
+    country: string,
+  ) {
     const data = await apiFetch<{ user: AuthUser } & AuthTokens>("/accounts/register/", {
       method: "POST",
       auth: false,
-      body: { full_name: fullName, email, password },
+      body: { full_name: fullName, email, password, age, country },
     });
     setTokens(data.access, data.refresh);
     setUser(data.user);

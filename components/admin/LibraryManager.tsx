@@ -9,6 +9,7 @@ import { apiFetch, ApiError } from "@/lib/api";
 import { BreadcrumbHomeIcon, ChevronIcon, FolderIcon } from "../catalogueIcons";
 import { FolderPlusIcon, UploadIcon, FileIcon, GearIcon, TrashIcon } from "./adminIcons";
 import ConfirmDialog from "./ConfirmDialog";
+import { StarRatingDisplay } from "../StarRating";
 
 const ACCEPTED_EXTENSIONS = ".pdf,.epub,.json,.jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.ogg,.mov";
 
@@ -255,7 +256,7 @@ export default function LibraryManager({ initialTree }: { initialTree: CatalogNo
       {message && <p className={`admin-message admin-message-${message.type}`}>{message.text}</p>}
 
       {folders.length + documents.length > 0 ? (
-        <div className="admin-table">
+        <div className="admin-table admin-table-with-actions">
           <div className="admin-table-head">
             <span>Nom</span>
             <span>Type</span>
@@ -309,10 +310,11 @@ export default function LibraryManager({ initialTree }: { initialTree: CatalogNo
                   </span>
                   {doc.title}
                 </span>
-                <span>
+                <span className="admin-table-type-cell">
                   <span className="admin-badge" data-type={doc.type}>
                     {TYPE_LABELS[doc.type]}
                   </span>
+                  <StarRatingDisplay value={doc.averageRating} count={doc.ratingsCount} />
                 </span>
                 <span className="admin-table-muted">{formatBytes(doc.size)}</span>
                 <span className="admin-table-action">

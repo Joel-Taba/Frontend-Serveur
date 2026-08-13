@@ -1,13 +1,17 @@
+"use client";
+
 import { COVERS, COVERS_BASE_PATH } from "@/lib/covers";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Marquee() {
+  const { t } = useLanguage();
   const items = [...COVERS, ...COVERS]; // dupliqué pour une boucle continue
 
   return (
     <section id="genres" className="section marquee-section">
       <div className="marquee-heading">
-        <p className="eyebrow">Nos univers</p>
-        <h2>Nos thématiques</h2>
+        <p className="eyebrow">{t.marquee.eyebrow}</p>
+        <h2>{t.marquee.heading}</h2>
       </div>
       <div className="marquee-track-wrap">
         <div className="marquee-track">
