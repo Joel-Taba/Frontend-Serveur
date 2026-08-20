@@ -5,8 +5,6 @@ import { apiFetch, ApiError } from "@/lib/api";
 import { SendIcon, MailIcon } from "./catalogueIcons";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const CONTACT_EMAIL = "joeltaba4@gmail.com";
-
 export default function ContactForm() {
   const { t } = useLanguage();
   const [type, setType] = useState(t.contact.types[0].key);
@@ -77,10 +75,6 @@ export default function ContactForm() {
       </form>
 
       {status && <p className={`contact-status contact-status-${status.kind}`}>{status.text}</p>}
-
-      <a className="contact-email" href={`mailto:${CONTACT_EMAIL}`}>
-        {CONTACT_EMAIL}
-      </a>
     </div>
   );
 }

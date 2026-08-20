@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { CatalogDocument, DocumentType } from "@/lib/catalog";
 import { useAuth } from "@/lib/AuthContext";
 import ThemeToggle from "@/components/ThemeToggle";
+import ChatWidget from "@/components/chat/ChatWidget";
 import { BackIcon } from "./icons";
 import RatingDialog from "./RatingDialog";
 
@@ -135,6 +136,8 @@ export default function ReaderShell({ doc }: { doc: CatalogDocument }) {
       </div>
 
       {showRating && <RatingDialog doc={doc} onDone={handleRatingDone} />}
+
+      <ChatWidget />
     </div>
   );
 }

@@ -10,11 +10,19 @@ export interface Dictionary {
     profile: string;
   };
   hero: {
-    title: string;
-    subtitle: string;
+    slides: { heading: string; subheading: string }[];
+    slideLabel: string;
     searchPlaceholder: string;
     searchButton: string;
     noResults: (query: string) => string;
+    demoCta: string;
+    demoTitle: string;
+    demoMessage: string;
+    demoClose: string;
+  };
+  catalogueSearch: {
+    eyebrow: string;
+    heading: string;
   };
   about: {
     eyebrow: string;
@@ -38,6 +46,7 @@ export interface Dictionary {
     heading: string;
     subtitle: string;
     tabLibrary: string;
+    tabAlphabetisation: string;
     tabTools: string;
     breadcrumbRoot: string;
     breadcrumbAriaLabel: string;
@@ -73,11 +82,6 @@ export interface Dictionary {
     sending: string;
     success: string;
     error: string;
-  };
-  cta: {
-    heading: string;
-    subtitle: string;
-    button: string;
   };
   footer: {
     description: string;
@@ -153,5 +157,19 @@ export interface Dictionary {
     saveError: string;
     backToSite: string;
     viewLibraryButton: string;
+  };
+  chat: {
+    title: string;
+    subtitle: string;
+    greeting: string;
+    placeholder: string;
+    send: string;
+    openLabel: string;
+    closeLabel: string;
+    unavailable: string;
+    error: string;
+    thinking: string;
+    loginRequired: string;
+    loginCta: string;
   };
 }

@@ -12,7 +12,13 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from "@/lib/AuthContext";
 import { getCountryLabel, getCountryRootPath } from "@/lib/countries";
 
-type Tab = "bibliotheque" | "outils";
+type Tab = "bibliotheque" | "alphabetisation" | "outils";
+
+// Dossier racine réservé à son propre onglet : retiré de l'arbre affiché
+// dans "Bibliothèque" (voir libraryTree ci-dessous), il n'apparaît donc
+// nulle part ailleurs que dans l'onglet "Alphabétisation".
+const ALPHABETISATION_SLUG = "alphabetisation";
+const ALPHABETISATION_ROOT_PATH = [ALPHABETISATION_SLUG];
 
 interface Crumb {
   id: string[];
@@ -56,14 +62,22 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
   const { user } = useAuth();
   const TABS: { id: Tab; label: string }[] = [
     { id: "bibliotheque", label: t.catalogue.tabLibrary },
+    { id: "alphabetisation", label: t.catalogue.tabAlphabetisation },
     { id: "outils", label: t.catalogue.tabTools },
   ];
 
+  // Dossier "Alphabétisation" : retiré de l'arbre de la Bibliothèque et
+  // navigable uniquement dans son propre onglet — voir ALPHABETISATION_SLUG.
+  const libraryTree = useMemo(
+    () => tree.filter((node) => !(isFolder(node) && node.id.length === 1 && node.id[0] === ALPHABETISATION_SLUG)),
+    [tree]
+  );
+
   // Un compte utilisateur (pas gestionnaire) avec un pays précis (pas "Tous
   // les pays") ne voit que le dossier de son pays — voir lib/countries.ts.
-  // La navigation continue de chercher dans `tree` (l'arbre complet, jamais
-  // réécrit) : seul le point de départ ("racine affichée") est ancré sur ce
-  // dossier, pour que les identifiants réels des sous-dossiers/documents
+  // La navigation continue de chercher dans `libraryTree` (jamais réécrit) :
+  // seul le point de départ ("racine affichée") est ancré sur ce dossier,
+  // pour que les identifiants réels des sous-dossiers/documents
   // (["senegal", "primaire"], utilisés pour la résolution côté Backend)
   // restent valides tout du long.
   const countryFilter = user && user.role !== "manager" ? user.country : null;
@@ -78,9 +92,17 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
     () => (searchParams.get("folder") ?? "").split("/").filter(Boolean),
     [searchParams]
   );
+  const startsInAlphabetisation = initialPath[0] === ALPHABETISATION_SLUG;
 
-  const [activeTab, setActiveTab] = useState<Tab>("bibliotheque");
-  const [currentPath, setCurrentPath] = useState<string[]>(initialPath);
+  const [activeTab, setActiveTab] = useState<Tab>(startsInAlphabetisation ? "alphabetisation" : "bibliotheque");
+  const [currentPath, setCurrentPath] = useState<string[]>(startsInAlphabetisation ? [] : initialPath);
+  // Comme countryRootPath : la navigation cherche dans `tree` (l'arbre
+  // complet, jamais réécrit), ancrée sur ["alphabetisation"] — sinon un
+  // sous-dossier comme ["alphabetisation", "test"] ne se retrouve plus une
+  // fois la racine "affichée" limitée au seul contenu de ce dossier.
+  const [alphaCurrentPath, setAlphaCurrentPath] = useState<string[]>(
+    startsInAlphabetisation ? initialPath : ALPHABETISATION_ROOT_PATH
+  );
 
   // La session (et donc le pays) se résout de façon asynchrone après le
   // premier rendu (jeton en sessionStorage, illisible côté serveur) : ce
@@ -103,18 +125,29 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryRootPath]);
 
-  const breadcrumbFull = useMemo(() => buildBreadcrumb(tree, currentPath), [tree, currentPath]);
+  const breadcrumbFull = useMemo(() => buildBreadcrumb(libraryTree, currentPath), [libraryTree, currentPath]);
   const breadcrumb = useMemo(
     () => breadcrumbFull.slice(countryRootPath.length),
     [breadcrumbFull, countryRootPath]
   );
-  const currentFolder = useMemo(() => findFolder(tree, currentPath), [tree, currentPath]);
-  const currentNodes = currentFolder ? currentFolder.children : tree;
+  const currentFolder = useMemo(() => findFolder(libraryTree, currentPath), [libraryTree, currentPath]);
+  const currentNodes = currentFolder ? currentFolder.children : libraryTree;
 
   const folders = currentNodes.filter(isFolder);
   const documents = currentNodes.filter(isDocument);
   const totalCount = folders.length + documents.length;
+
+  // Onglet Alphabétisation : navigation indépendante, non filtrée par pays.
+  const alphaBreadcrumbFull = useMemo(() => buildBreadcrumb(tree, alphaCurrentPath), [tree, alphaCurrentPath]);
+  const alphaBreadcrumb = useMemo(() => alphaBreadcrumbFull.slice(1), [alphaBreadcrumbFull]);
+  const alphaCurrentFolder = useMemo(() => findFolder(tree, alphaCurrentPath), [tree, alphaCurrentPath]);
+  const alphaCurrentNodes = alphaCurrentFolder ? alphaCurrentFolder.children : [];
+  const alphaFolders = alphaCurrentNodes.filter(isFolder);
+  const alphaDocuments = alphaCurrentNodes.filter(isDocument);
+  const alphaTotalCount = alphaFolders.length + alphaDocuments.length;
+
   const showLibrary = activeTab === "bibliotheque";
+  const showAlphabetisation = activeTab === "alphabetisation";
 
   return (
     <section id="catalogue" className="section">
@@ -161,6 +194,42 @@ export default function Catalogue({ tree, tools }: { tree: CatalogNode[]; tools:
                   <FolderRow key={folder.id.join("/")} folder={folder} onOpen={() => setCurrentPath(folder.id)} />
                 ))}
                 {documents.map((doc) => (
+                  <DocumentRow key={doc.id.join("/")} doc={doc} />
+                ))}
+              </div>
+            ) : (
+              <p className="empty-state">{t.catalogue.emptyFolder}</p>
+            )}
+          </>
+        ) : showAlphabetisation ? (
+          <>
+            <nav className="breadcrumb" aria-label={t.catalogue.breadcrumbAriaLabel}>
+              <button
+                type="button"
+                className="breadcrumb-item"
+                onClick={() => setAlphaCurrentPath(ALPHABETISATION_ROOT_PATH)}
+              >
+                <BreadcrumbHomeIcon />
+                <span>{t.catalogue.tabAlphabetisation}</span>
+              </button>
+              {alphaBreadcrumb.map((crumb) => (
+                <span className="breadcrumb-crumb" key={crumb.id.join("/")}>
+                  <ChevronIcon />
+                  <button type="button" className="breadcrumb-item" onClick={() => setAlphaCurrentPath(crumb.id)}>
+                    {crumb.name}
+                  </button>
+                </span>
+              ))}
+            </nav>
+
+            <div className="doc-count">{alphaTotalCount > 0 && t.catalogue.itemsCount(alphaTotalCount)}</div>
+
+            {alphaTotalCount > 0 ? (
+              <div className="list">
+                {alphaFolders.map((folder) => (
+                  <FolderRow key={folder.id.join("/")} folder={folder} onOpen={() => setAlphaCurrentPath(folder.id)} />
+                ))}
+                {alphaDocuments.map((doc) => (
                   <DocumentRow key={doc.id.join("/")} doc={doc} />
                 ))}
               </div>

@@ -12,12 +12,34 @@ export const fr: Dictionary = {
     profile: "Profil",
   },
   hero: {
-    title: "Découvrez Une Sélection Choisie De Livres & Documents",
-    subtitle:
-      "Science, romance, développement personnel, astronomie, histoire… Une collection que vous parcourez et lisez entièrement en ligne grâce à notre lecteur intégré — sans jamais télécharger ni copier les fichiers.",
+    slides: [
+      {
+        heading: "Découvrez Flores Learning Centre :",
+        subheading:
+          "Un écosystème numérique d'apprentissage multifonctionnel, totalement autonome et taillé pour vous.",
+      },
+      {
+        heading: "Un panel de ressources pédagogiques pour tous les niveaux :",
+        subheading: "Manuels d'apprentissage, outils d'apprentissage de l'écriture et bien d'autres…",
+      },
+      {
+        heading: "Une gamme variée de thématiques réunies à un seul endroit :",
+        subheading:
+          "Manuels au programme, science, développement personnel, astronomie, histoire, culture générale… Une collection faite pour vous et qui vous ressemble.",
+      },
+    ],
+    slideLabel: "Diapositive",
     searchPlaceholder: "Rechercher un titre, un genre…",
     searchButton: "Rechercher",
     noResults: (query) => `Aucun document ne correspond à « ${query} ».`,
+    demoCta: "Voir Démo",
+    demoTitle: "Vidéo de démonstration",
+    demoMessage: "La vidéo de démonstration arrive bientôt — revenez un peu plus tard !",
+    demoClose: "Fermer",
+  },
+  catalogueSearch: {
+    eyebrow: "Recherche",
+    heading: "Que cherchez-vous aujourd'hui ?",
   },
   about: {
     eyebrow: "À propos",
@@ -58,6 +80,7 @@ export const fr: Dictionary = {
     heading: "Notre Écosystème",
     subtitle: "Parcourez les cours par niveau ou découvrez tous les outils de notre écosystème.",
     tabLibrary: "Bibliothèque",
+    tabAlphabetisation: "Alphabétisation",
     tabTools: "Nos Outils",
     breadcrumbRoot: "Bibliothèque",
     breadcrumbAriaLabel: "Fil d'Ariane",
@@ -146,12 +169,6 @@ export const fr: Dictionary = {
     success: "Message envoyé, merci !",
     error: "Impossible d'envoyer le message pour le moment.",
   },
-  cta: {
-    heading: "Un Nouveau Document Vient D'être Ajouté",
-    subtitle:
-      "Les contenus s'actualisent automatiquement — revenez souvent pour découvrir les derniers ajouts et nos nouveaux outils.",
-    button: "Voir les contenus",
-  },
   footer: {
     description:
       "Bibliothèque numérique en lecture seule. Les documents proposés restent la propriété de leurs auteurs et ne peuvent être ni téléchargés, ni reproduits.",
@@ -227,5 +244,19 @@ export const fr: Dictionary = {
     saveError: "Impossible de mettre à jour votre pays pour le moment.",
     backToSite: "Retour à l'accueil",
     viewLibraryButton: "Voir ma bibliothèque",
+  },
+  chat: {
+    title: "Assistant Flores",
+    subtitle: "Questions sur les cours, formules et vocabulaire",
+    greeting: "Bonjour ! Pose-moi une question sur un cours, une formule ou un mot de vocabulaire.",
+    placeholder: "Écris ta question…",
+    send: "Envoyer",
+    openLabel: "Ouvrir l'assistant",
+    closeLabel: "Fermer l'assistant",
+    unavailable: "L'assistant n'est pas encore disponible — reviens un peu plus tard.",
+    error: "Impossible de contacter l'assistant pour le moment.",
+    thinking: "L'assistant réfléchit…",
+    loginRequired: "Connecte-toi pour discuter avec l'assistant.",
+    loginCta: "Se connecter",
   },
 };

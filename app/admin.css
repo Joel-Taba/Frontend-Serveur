@@ -297,6 +297,58 @@
 .admin-upload-btn svg { width: 16px; height: 16px; }
 .admin-upload-btn.is-disabled { opacity: 0.6; pointer-events: none; }
 
+/* ---------- Filtre par période (Historique des connexions) ---------- */
+.admin-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.admin-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-alt);
+}
+.admin-filter-tab {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.admin-filter-tab:hover { color: var(--text); }
+.admin-filter-tab.active { background: var(--accent); color: var(--accent-contrast); }
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--accent-pdf);
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.15s, transform 0.15s;
+}
+.btn-danger:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn-danger:disabled { opacity: 0.5; cursor: default; transform: none; }
+
 .admin-panel .btn-primary { background: var(--accent); color: var(--accent-contrast); }
 .admin-panel .btn-primary:hover { filter: brightness(1.06); }
 .admin-panel .btn-ghost { background: var(--accent-soft); color: var(--accent); border-color: transparent; }

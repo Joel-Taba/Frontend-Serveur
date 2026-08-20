@@ -12,12 +12,33 @@ export const en: Dictionary = {
     profile: "Profile",
   },
   hero: {
-    title: "Discover A Curated Selection Of Books & Documents",
-    subtitle:
-      "Science, romance, personal development, astronomy, history… A collection you browse and read entirely online with our built-in reader — never downloading or copying files.",
+    slides: [
+      {
+        heading: "Discover Flores Learning Centre:",
+        subheading: "A multifunctional digital learning ecosystem, fully self-contained and built for you.",
+      },
+      {
+        heading: "A full range of learning resources for every level:",
+        subheading: "Learning manuals, handwriting tools, and much more…",
+      },
+      {
+        heading: "A wide variety of subjects, all in one place:",
+        subheading:
+          "Curriculum manuals, science, personal development, astronomy, history, general knowledge… A collection made for you, and like you.",
+      },
+    ],
+    slideLabel: "Slide",
     searchPlaceholder: "Search a title, a genre…",
     searchButton: "Search",
     noResults: (query) => `No document matches "${query}".`,
+    demoCta: "Watch Demo",
+    demoTitle: "Demo video",
+    demoMessage: "The demo video is coming soon — check back later!",
+    demoClose: "Close",
+  },
+  catalogueSearch: {
+    eyebrow: "Search",
+    heading: "What are you looking for today?",
   },
   about: {
     eyebrow: "About",
@@ -57,6 +78,7 @@ export const en: Dictionary = {
     heading: "Our Ecosystem",
     subtitle: "Browse courses by level or discover all the tools in our ecosystem.",
     tabLibrary: "Library",
+    tabAlphabetisation: "Literacy",
     tabTools: "Our Tools",
     breadcrumbRoot: "Library",
     breadcrumbAriaLabel: "Breadcrumb",
@@ -145,11 +167,6 @@ export const en: Dictionary = {
     success: "Message sent, thank you!",
     error: "Unable to send the message right now.",
   },
-  cta: {
-    heading: "A New Document Was Just Added",
-    subtitle: "Content updates automatically — check back often to discover the latest additions and our new tools.",
-    button: "See the contents",
-  },
   footer: {
     description:
       "Read-only digital library. The documents offered remain the property of their authors and may not be downloaded or reproduced.",
@@ -225,5 +242,19 @@ export const en: Dictionary = {
     saveError: "Unable to update your country right now.",
     backToSite: "Back to home",
     viewLibraryButton: "View my library",
+  },
+  chat: {
+    title: "Flores Assistant",
+    subtitle: "Questions about lessons, formulas and vocabulary",
+    greeting: "Hi! Ask me a question about a lesson, a formula, or a vocabulary word.",
+    placeholder: "Type your question…",
+    send: "Send",
+    openLabel: "Open the assistant",
+    closeLabel: "Close the assistant",
+    unavailable: "The assistant isn't available yet — please check back later.",
+    error: "Unable to reach the assistant right now.",
+    thinking: "The assistant is thinking…",
+    loginRequired: "Log in to chat with the assistant.",
+    loginCta: "Log in",
   },
 };

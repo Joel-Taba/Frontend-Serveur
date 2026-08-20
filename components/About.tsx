@@ -5,15 +5,15 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function About({ documentCount, formatCount }: { documentCount: number; formatCount: number }) {
   const { t } = useLanguage();
-  const [invisibles, romance, ia] = [COVERS[4], COVERS[1], COVERS[5]];
+  const [coverPrimary, coverSecondary, coverTertiary] = [COVERS[0], COVERS[7], COVERS[3]];
 
   return (
     <section id="a-propos" className="section">
       <div className="about">
         <div className="about-collage" aria-hidden="true">
-          <img className="ac-1" src={`${COVERS_BASE_PATH}${invisibles.file}`} alt="" />
-          <img className="ac-2" src={`${COVERS_BASE_PATH}${romance.file}`} alt="" />
-          <img className="ac-3" src={`${COVERS_BASE_PATH}${ia.file}`} alt="" />
+          <img className="ac-1" src={`${COVERS_BASE_PATH}${coverPrimary.file}`} alt="" />
+          <img className="ac-2" src={`${COVERS_BASE_PATH}${coverSecondary.file}`} alt="" />
+          <img className="ac-3" src={`${COVERS_BASE_PATH}${coverTertiary.file}`} alt="" />
         </div>
         <div className="about-text">
           <p className="eyebrow">{t.about.eyebrow}</p>

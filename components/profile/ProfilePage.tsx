@@ -16,11 +16,14 @@ export default function ProfilePage() {
   const { user, updateUser } = useAuth();
   const { t } = useLanguage();
 
+  const [fullName, setFullName] = useState(user?.full_name ?? "");
   const [country, setCountry] = useState(user?.country ?? "");
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<StatusMessage | null>(null);
 
   if (!user) return null;
+
+  const hasChanges = fullName.trim() !== user.full_name || country !== user.country;
 
   async function handleSubmit(event: React.SubmitEvent) {
     event.preventDefault();
@@ -29,7 +32,7 @@ export default function ProfilePage() {
     try {
       const updated = await apiFetch<AuthUser>("/accounts/me/", {
         method: "PATCH",
-        body: { country },
+        body: { full_name: fullName.trim(), country },
       });
       updateUser(updated);
       setStatus({ kind: "success", text: t.profile.saveSuccess });
@@ -58,10 +61,6 @@ export default function ProfilePage() {
         <p className="profile-subtitle">{t.profile.subtitle}</p>
 
         <div className="profile-field profile-field-static">
-          <label>{t.auth.fullNameLabel}</label>
-          <p>{user.full_name}</p>
-        </div>
-        <div className="profile-field profile-field-static">
           <label>{t.auth.emailLabel}</label>
           <p>{user.email}</p>
         </div>
@@ -71,6 +70,17 @@ export default function ProfilePage() {
         </div>
 
         <form className="profile-form" onSubmit={handleSubmit}>
+          <div className="profile-field">
+            <label htmlFor="profile-full-name">{t.auth.fullNameLabel}</label>
+            <input
+              id="profile-full-name"
+              type="text"
+              required
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+            />
+          </div>
+
           <div className="profile-field">
             <label htmlFor="profile-country">{t.auth.countryLabel}</label>
             <select id="profile-country" value={country} onChange={(event) => setCountry(event.target.value)}>
@@ -84,7 +94,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="profile-form-actions">
-            <button type="submit" className="btn btn-primary" disabled={saving || country === user.country}>
+            <button type="submit" className="btn btn-primary" disabled={saving || !hasChanges}>
               {saving ? t.profile.saveButtonLoading : t.profile.saveButton}
             </button>
             <Link className="btn btn-ghost" href="/#catalogue">

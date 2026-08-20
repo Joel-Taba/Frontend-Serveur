@@ -232,31 +232,56 @@ img { max-width: 100%; display: block; }
   isolation: isolate;
 }
 
-.hero-photo::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 160px;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent, var(--bg));
-}
-
-.hero-photo-media {
+/* Carrousel façon cube 3D : chaque diapositive est une face d'un prisme
+   qui tourne sur son axe vertical (rotateY) — la face suivante pivote
+   pour venir se placer devant la caméra, comme les faces d'un cube.
+   .hero-cube-face est plaqué à faceDepth (calculé en JS depuis la largeur
+   réelle du bandeau) pour former un volume cohérent plutôt que des images
+   qui se chevauchent. */
+.hero-cube-stage {
   position: absolute;
   inset: 0;
   z-index: 0;
+  perspective: 1800px;
+  overflow: hidden;
 }
-.hero-photo-media img { object-fit: cover; }
-
-.hero-photo-scrim {
+.hero-cube {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1.15s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.hero-cube-face {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(100deg, rgba(8, 6, 4, 0.88) 0%, rgba(8, 6, 4, 0.62) 34%, rgba(8, 6, 4, 0.18) 60%, rgba(8, 6, 4, 0.4) 100%),
-    linear-gradient(0deg, rgba(6, 5, 3, 0.75) 0%, rgba(6, 5, 3, 0.05) 42%);
+  display: flex;
+  backface-visibility: hidden;
+}
+/* La 3e diapositive a deux photos (flex) au lieu d'une — chaque
+   .hero-slide-image-wrap se partage alors la largeur de sa face. */
+.hero-slide-image-wrap { position: relative; flex: 1; overflow: hidden; }
+.hero-slide-image-wrap img { transform: scale(1); }
+/* Léger zoom continu pendant l'affichage — relancé à chaque fois que la
+   diapositive redevient active (le navigateur redémarre l'animation dès
+   que la règle s'applique de nouveau à l'élément). */
+.hero-cube-face[aria-hidden="false"] .hero-slide-image-wrap img {
+  animation: hero-kenburns 7.5s ease-out forwards;
+}
+@keyframes hero-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+/* Dégradé discret, uniquement pour garder le texte lisible sans assombrir
+   toute la photo (contrairement à l'ancien voile retiré) — concentré dans
+   la zone basse gauche où vit le texte. */
+.hero-photo-textscrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(10, 8, 6, 0.58) 0%, rgba(10, 8, 6, 0.18) 45%, transparent 68%);
 }
 
 .hero-photo-wordmark {
@@ -286,6 +311,15 @@ img { max-width: 100%; display: block; }
   padding-left: max(28px, calc((100vw - 1200px) / 2 + 28px));
 }
 
+/* Glissement horizontal + fondu à chaque changement de diapo, dans le sens
+   de la rotation du cube — le composant force un remount
+   (key={activeSlide}), ce qui relance l'animation à chaque fois. */
+.hero-slide-text { animation: hero-text-reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes hero-text-reveal {
+  from { opacity: 0; transform: translateX(32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 .hero-photo h1 {
   font-family: var(--font-serif), serif;
   font-size: clamp(2.1rem, 3.9vw, 2.9rem);
@@ -303,36 +337,93 @@ img { max-width: 100%; display: block; }
   line-height: 1.8;
   margin: 0 0 36px;
   max-width: 660px;
+  /* Réserve la hauteur du texte le plus long (diapo 3) : la barre de
+     recherche et les points ne sautent pas d'une diapositive à l'autre. */
+  min-height: calc(1.8em * 3);
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
 }
 
+.hero-demo-cta svg { width: 14px; height: 14px; }
+
+.hero-slide-dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+.hero-slide-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.25s, transform 0.25s;
+}
+.hero-slide-dot:hover { background: rgba(255, 255, 255, 0.7); }
+.hero-slide-dot.active { background: #fff; transform: scale(1.35); }
+
 .hero-search-wrap-inner { position: relative; max-width: 560px; }
 
-.hero-photo-search-wrap .hero-search {
+/* ---------- Recherche, juste au-dessus du catalogue ---------- */
+.catalogue-search-section {
+  text-align: center;
+  padding-bottom: 24px;
+}
+.catalogue-search-section .eyebrow { justify-content: center; }
+.catalogue-search-section h2 { margin: 0 0 28px; }
+
+.catalogue-search-wrap {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.catalogue-search-wrap .hero-search {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 6px;
-  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-soft);
   max-width: 560px;
+  transition: border-color 0.2s;
 }
+.catalogue-search-wrap .hero-search:focus-within { border-color: var(--accent); }
 
-.hero-photo-search-wrap .hero-search input {
+.catalogue-search-wrap .hero-search input {
   flex: 1;
   border: none;
   background: transparent;
-  padding: 10px 16px;
-  font-size: 0.92rem;
-  color: #221c14;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  color: var(--text);
   outline: none;
   font-family: inherit;
 }
-.hero-photo-search-wrap .hero-search input::placeholder { color: #8a8074; }
-.hero-photo-search-wrap .hero-search .btn:disabled { opacity: 0.5; cursor: default; }
-.hero-photo-search-wrap .hero-search .btn { white-space: nowrap; }
+.catalogue-search-wrap .hero-search input::placeholder { color: var(--text-muted); }
+.catalogue-search-wrap .hero-search .btn:disabled { opacity: 0.5; cursor: default; }
+.catalogue-search-wrap .hero-search .btn { white-space: nowrap; }
+
+/* ---------- Frise d'alphabet (sépare le hero du reste de la page) ---------- */
+.alphabet-divider {
+  overflow: hidden;
+  padding: 18px 0;
+}
+.alphabet-track {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: max-content;
+  animation: alphabet-scroll 32s linear infinite;
+}
+.alphabet-tile { flex: none; height: 52px; width: auto; filter: drop-shadow(0 6px 10px rgba(20, 16, 8, 0.18)); }
+@keyframes alphabet-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
 
 /* ---------- Suggestions de recherche (autocomplétion) ---------- */
 .hero-search-suggestions {
@@ -340,12 +431,14 @@ img { max-width: 100%; display: block; }
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: #fff;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow);
   overflow-y: auto;
   max-height: 320px;
   z-index: 5;
+  text-align: start;
 }
 
 .hero-search-suggestion {
@@ -357,16 +450,16 @@ img { max-width: 100%; display: block; }
   padding: 12px 18px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid #f0ebe2;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
   font-family: inherit;
 }
 .hero-search-suggestion:last-child { border-bottom: none; }
-.hero-search-suggestion:hover, .hero-search-suggestion:focus-visible { background: #faf6f0; }
-.hero-search-suggestion-title { font-size: 0.9rem; font-weight: 600; color: #221c14; }
-.hero-search-suggestion-path { font-size: 0.75rem; color: #8a8074; }
+.hero-search-suggestion:hover, .hero-search-suggestion:focus-visible { background: var(--bg-alt); }
+.hero-search-suggestion-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.hero-search-suggestion-path { font-size: 0.75rem; color: var(--text-muted); }
 
-.hero-search-suggestion-empty { padding: 16px 18px; margin: 0; font-size: 0.85rem; color: #8a8074; }
+.hero-search-suggestion-empty { padding: 16px 18px; margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
 /* ---------- Sections communes ---------- */
 .section {
@@ -1029,26 +1122,6 @@ img { max-width: 100%; display: block; }
 .contact-status-success { background: rgba(90, 180, 120, 0.14); color: #3f9d5a; border-color: rgba(90, 180, 120, 0.3); }
 .contact-status-error { background: rgba(224, 100, 79, 0.14); color: var(--accent-pdf); border-color: rgba(224, 100, 79, 0.3); }
 
-.contact-email {
-  margin-top: 4px;
-  font-size: 0.82rem;
-  color: var(--accent);
-  font-weight: 600;
-  word-break: break-all;
-}
-.contact-email:hover { text-decoration: underline; }
-
-/* ---------- CTA banner ---------- */
-.cta-banner {
-  background: var(--accent-soft);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  text-align: center;
-  padding: 64px 28px;
-}
-.cta-banner h2 { max-width: 620px; margin: 0 auto 12px; }
-.cta-banner p { color: var(--text-muted); margin: 0 0 28px; }
-
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--border); padding: 56px 28px 28px; margin-top: 20px; }
 .footer-grid {
@@ -1082,6 +1155,141 @@ img { max-width: 100%; display: block; }
   .contact-card { position: static; }
 }
 
+/* ---------- Assistant IA (widget flottant, coin bas droit) ----------
+   Monté à la fois sur la page d'accueil (page.tsx) et dans le lecteur de
+   documents (ReaderShell.tsx) : styles ici, dans globals.css, chargé
+   partout. z-index sous .confirm-overlay (100) pour rester discret derrière
+   une boîte de dialogue bloquante (notation, confirmation). */
+.chat-widget-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 90;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.2s;
+}
+.chat-widget-toggle:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.chat-widget-toggle svg { width: 26px; height: 26px; }
+
+.chat-widget-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 92px;
+  z-index: 90;
+  width: min(360px, calc(100vw - 32px));
+  height: min(500px, calc(100vh - 140px));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-widget-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--accent-soft);
+}
+.chat-widget-title { margin: 0; font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.chat-widget-subtitle { margin: 2px 0 0; font-size: 0.76rem; color: var(--text-muted); }
+.chat-widget-close {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  border-radius: 8px;
+  flex: none;
+}
+.chat-widget-close:hover { color: var(--text); background: var(--bg-alt); }
+.chat-widget-close svg { width: 18px; height: 18px; }
+
+.chat-widget-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-widget-login-required {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+.chat-widget-login-required p { margin: 0; color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; }
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.chat-bubble-assistant { align-self: flex-start; background: var(--bg-alt); color: var(--text); border-bottom-left-radius: 4px; }
+.chat-bubble-user { align-self: flex-end; background: var(--accent); color: var(--accent-contrast); border-bottom-right-radius: 4px; }
+.chat-bubble-thinking { color: var(--text-muted); font-style: italic; }
+
+.chat-widget-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.chat-widget-form input {
+  flex: 1;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+}
+.chat-widget-form input:focus { border-color: var(--accent); }
+.chat-widget-form button {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
+  transition: filter 0.2s;
+}
+.chat-widget-form button svg { width: 16px; height: 16px; }
+.chat-widget-form button:disabled { opacity: 0.5; cursor: default; }
+.chat-widget-form button:not(:disabled):hover { filter: brightness(1.06); }
+
 @media (max-width: 640px) {
   .header-inner { padding: 18px; }
   .main-nav { display: none; }
@@ -1100,4 +1308,7 @@ img { max-width: 100%; display: block; }
   .stats-grid { grid-template-columns: 1fr; gap: 32px; }
   .stats-grid::before { display: none; }
   .contact-form-row { flex-direction: column; }
+  .chat-widget-toggle { right: 16px; bottom: 16px; width: 50px; height: 50px; }
+  .chat-widget-toggle svg { width: 22px; height: 22px; }
+  .chat-widget-panel { right: 16px; bottom: 78px; height: min(60vh, 460px); }
 }

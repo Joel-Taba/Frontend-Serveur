@@ -29,6 +29,10 @@ export default function ImageReader({ doc, fileUrl, onToolbar, onProgress }: Rea
     let cancelled = false;
     let url: string | null = null;
 
+    // Réinitialise le zoom/recentrage à chaque nouveau document (fileUrl
+    // change) : sans ça, ouvrir une deuxième image reprendrait le niveau de
+    // zoom laissé sur la précédente au lieu de repartir des 200% par défaut.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setScale(DEFAULT_SCALE);
     setBaseSize(null);
     hasCenteredRef.current = false;
@@ -81,7 +85,6 @@ export default function ImageReader({ doc, fileUrl, onToolbar, onProgress }: Rea
         <FullscreenButton />
       </>
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scale, onToolbar]);
 
   const zoomed = scale > 1 && baseSize;

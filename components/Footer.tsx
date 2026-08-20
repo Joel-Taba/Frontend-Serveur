@@ -56,7 +56,16 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="footer-bottom">{t.footer.copyright}</div>
+      <div className="footer-bottom">
+        {t.footer.copyright}
+        <span className="footer-credit">
+          {" "}
+          — Icônes alphabet :{" "}
+          <a href="http://www.freepik.com" target="_blank" rel="noopener noreferrer">
+            Designed by brgfx / Freepik
+          </a>
+        </span>
+      </div>
     </footer>
   );
 }
